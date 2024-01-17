@@ -58,7 +58,16 @@ export default class ReminderApp {
    * Interfaces with user to toggle completion status of a specific reminder.
    */
   private handleToggleCompletion(): void {
-    /*
+    if (this._remindersHandler.size() === 0) {
+      Logger.log("\n ⚠️  You have no reminders");
+    } else if (1) {
+      Logger.logGroupedReminders(this._remindersHandler.groupByTag());
+    } else if (2) {
+    } else if (3) {
+    } else {
+      Logger.log("\n 🏁   Reminder Completion Toggled");
+    }
+    /* 
             Pseudocode:
             If no reminders then -> Logger.log('\n  ⚠️  You have no reminders');
             otherwise
@@ -75,13 +84,13 @@ export default class ReminderApp {
   private handleModifyReminders(): void {
     if (this._remindersHandler.size() === 0) {
       Logger.log("\n  ⚠️  You have no reminders");
-    } else if (1) {
+    } else if (this._remindersHandler.getReminder(1)) {
       Logger.logReminders;
-    } else if (3) {
+    } else if (this._remindersHandler.getReminder(3)) {
       this.getUserChoice;
-    } else if (4) {
+    } else if (this._remindersHandler.getReminder(4)) {
       this._remindersHandler.modifyReminder;
-    } else if (2) {
+    } else if (this._remindersHandler.getReminder(2)) {
       this.getUserChoice;
     }
     /*
@@ -122,9 +131,10 @@ export default class ReminderApp {
   private handleSearchReminders(): void {
     if (this._remindersHandler.size() === 0) {
       Logger.log("\n  ⚠️ You have no reminders");
-    } else if (this._remindersHandler.search(keyword)) {
-    }
-    /*
+    } else {
+      const keyword = this.getUserChoice;
+      let searchResult = this._remindersHandler.search(keyword);
+    } /*
         Pseudocode:
         If no reminders then -> Logger.log('\n  ⚠️  You have no reminders');
         otherwise

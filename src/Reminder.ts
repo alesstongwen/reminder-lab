@@ -7,10 +7,10 @@ export default class Reminder {
   private _tag: string;
   private _isCompleted: boolean;
   /*
+  Minimum Number of Properties you will need:
   _description: string
   _tag: string
   _isCompleted: boolean (default value should be false)
-    Minimum Number of Properties you will need:
     */
 
   /**

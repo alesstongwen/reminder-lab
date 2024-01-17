@@ -98,7 +98,14 @@ export default class RemindersHandler {
    * @param keyword - Text to search for in description and tag
    */
   public search(keyword: string): Reminder[] {
-    throw new Error("Not yet implemented");
+    const tagMatches = this._reminders.filter((reminder) => reminder.tag === keyword);
+    if (tagMatches.length > 0) {
+      return tagMatches;
+    }
+    const descriptionMatches = this._reminders.filter((reminder) =>
+      reminder.description.toLowerCase().includes(keyword.toLowerCase()),
+    );
+    return descriptionMatches;
   }
 
   /**

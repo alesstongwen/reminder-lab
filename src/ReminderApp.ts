@@ -1,7 +1,6 @@
 import readlineSync from "readline-sync";
 import Logger from "./util/ReminderLogger";
 import RemindersHandler from "./RemindersHandler";
-import Reminder from "./Reminder";
 
 /**
  * @class ReminderApp
@@ -58,16 +57,7 @@ export default class ReminderApp {
    * Interfaces with user to toggle completion status of a specific reminder.
    */
   private handleToggleCompletion(): void {
-    if (this._remindersHandler.size() === 0) {
-      Logger.log("\n ⚠️  You have no reminders");
-    } else if (1) {
-      Logger.logGroupedReminders(this._remindersHandler.groupByTag());
-    } else if (2) {
-    } else if (3) {
-    } else {
-      Logger.log("\n 🏁   Reminder Completion Toggled");
-    }
-    /* 
+    /*
             Pseudocode:
             If no reminders then -> Logger.log('\n  ⚠️  You have no reminders');
             otherwise
@@ -76,23 +66,27 @@ export default class ReminderApp {
             ( 3 ) Take result from ( 2 ) and toggle that reminder's completion (this._remindersHandler.toggleCompletion)
             ( 4 ) Logger.log('\n  🏁   Reminder Completion Toggled');
         */
+    // Check if there are any reminders
+    if (this._remindersHandler.size() === 0) {
+      Logger.log("\n  ⚠️  You have no reminders");
+      return;
+    }
+
+    Logger.logReminders(this._remindersHandler.reminders);
+
+    const reminderIndex = this.getUserChoice("Choose a reminder number to toggle", true);
+
+    const index = parseInt(reminderIndex) - 1;
+
+    this._remindersHandler.toggleCompletion(index);
+
+    Logger.log("\n  🏁   Reminder Completion Toggled");
   }
 
   /**
    * Interfaces with user to modify a specific reminder.
    */
   private handleModifyReminders(): void {
-    if (this._remindersHandler.size() === 0) {
-      Logger.log("\n  ⚠️  You have no reminders");
-    } else if (this._remindersHandler.getReminder(1)) {
-      Logger.logReminders;
-    } else if (this._remindersHandler.getReminder(3)) {
-      this.getUserChoice;
-    } else if (this._remindersHandler.getReminder(4)) {
-      this._remindersHandler.modifyReminder;
-    } else if (this._remindersHandler.getReminder(2)) {
-      this.getUserChoice;
-    }
     /*
             Pseudocode:
             If no reminders then -> Logger.log('\n  ⚠️  You have no reminders');
@@ -104,16 +98,31 @@ export default class ReminderApp {
             ( 5 ) If user wishes to also toggle reminder status, do so (this._remindersHandler.toggleCompletion)...feeding in ( 2 )
             ( 6 ) Logger.log('\n  🏁   Reminder Modified');
         */
+    // Check if there are any reminders
+    if (this._remindersHandler.size() === 0) {
+      Logger.log("\n  ⚠️  You have no reminders");
+      return;
+    }
+
+    Logger.logReminders(this._remindersHandler.reminders);
+
+    const reminderIndex = this.getUserChoice("reminder number to edit", true);
+
+    const newDescription = this.getUserChoice("new reminder description", false);
+
+    this._remindersHandler.modifyReminder(parseInt(reminderIndex) - 1, newDescription);
+
+    if (ReminderApp.checkUserToggleChoice()) {
+      this._remindersHandler.toggleCompletion(parseInt(reminderIndex) - 1);
+    }
+
+    Logger.log("\n  🏁   Reminder Modified");
   }
 
   /**
    * Interfaces with user to add a reminder.
    */
   private handleAddReminder(): void {
-    const description = this.getUserChoice("reminder", false);
-    const tag = this.getUserChoice("tag", false);
-    this._remindersHandler.addReminder(description, tag);
-    Logger.log("\n  🏁  Reminder Added");
     /*
             Pseudocode:
             ( 1 ) Ask User to enter a reminder (description) (this.getUserChoice)
@@ -121,6 +130,17 @@ export default class ReminderApp {
             ( 3 ) Take result from ( 1 ) and ( 2 ) and add reminder (this._remindersHandler.addReminder)
             ( 4 ) Logger.log('\n  🏁  Reminder Added');
         */
+    // Step 1: Ask user to enter a reminder description
+    const reminderDescription = this.getUserChoice("reminder (description)", false);
+
+    // Step 2: Ask user to enter a tag for the reminder
+    const reminderTag = this.getUserChoice("tag for the reminder", false);
+
+    // Step 3: Add the reminder with the provided description and tag
+    this._remindersHandler.addReminder(reminderDescription, reminderTag);
+
+    // Step 4: Log the confirmation message
+    Logger.log("\n  🏁  Reminder Added");
   }
 
   /**
@@ -129,12 +149,7 @@ export default class ReminderApp {
    * are logged instead.
    */
   private handleSearchReminders(): void {
-    if (this._remindersHandler.size() === 0) {
-      Logger.log("\n  ⚠️ You have no reminders");
-    } else {
-      const keyword = this.getUserChoice;
-      let searchResult = this._remindersHandler.search(keyword);
-    } /*
+    /*
         Pseudocode:
         If no reminders then -> Logger.log('\n  ⚠️  You have no reminders');
         otherwise
@@ -145,24 +160,36 @@ export default class ReminderApp {
               - If not, then call this.searchDescriptions(keyword) and look through each
                 individual reminder. 
     */
+    // Check if there are any reminders
+    if (this._remindersHandler.size() === 0) {
+      Logger.log("\n  ⚠️  You have no reminders");
+      return;
+    }
+
+    const keyword = this.getUserChoice("Enter a search keyword", false);
+
+    const searchResults = this._remindersHandler.search(keyword);
+    Logger.logSearchResults(searchResults);
   }
 
   /**
    * Logs any existing reminders to console, grouped by tags.
    */
   private handleShowReminders(): void {
-    if (this._remindersHandler.size() === 0) {
-      Logger.log("\n  ⚠️ You have no reminders");
-    }
-    // console.log(this._remindersHandler.reminders);
-    Logger.logGroupedReminders(this._remindersHandler.groupByTag());
-  }
-  /*
+    /*
         Pseudocode:
         If no reminders then -> Logger.log('\n  ⚠️  You have no reminders');
         otherwise
         ( 1 ) Logger.logGroupedReminders(this._remindersHandler.groupByTag());
     */
+    // Check if there are any reminders
+    if (this._remindersHandler.size() === 0) {
+      Logger.log("\n  ⚠️  You have no reminders");
+    } else {
+      const groupedReminders = this._remindersHandler.groupByTag();
+      Logger.logGroupedReminders(groupedReminders);
+    }
+  }
 
   /**
    * Returns verified user input based on Main Menu item selected.

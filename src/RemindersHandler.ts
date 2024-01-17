@@ -6,33 +6,26 @@ import Reminder from "./Reminder";
 export interface RemindersGroupingByTag {
   [tag: string]: Reminder[];
 }
-/*
-  {
-      "grocery": [{"description": "buy milk", isComplete: false }],
-      "study": [{"description": "buy milk", isComplete: false }],
-  }
-*/
+
 /**
  * @class RemindersHandler
  * @description Represents a handler that manages a list of reminders
  */
 export default class RemindersHandler {
   private _reminders: Reminder[];
-  _tag: string;
 
   /**
    * Creates a new RemindersHandler instance with no reminders.
    */
-  constructor(tag: string) {
+  constructor() {
     this._reminders = [];
-    this._tag = tag;
   }
 
   /**
    * Returns the list of reminders added so far.
    */
   public get reminders(): Reminder[] {
-    return this._reminders;
+    return [...this._reminders];
   }
 
   /**
@@ -41,16 +34,22 @@ export default class RemindersHandler {
    * @param tag - The keyword used to help categorize reminder
    */
   public addReminder(description: string, tag: string): void {
-    const reminder = new Reminder(description, tag, false);
-    this.reminders.push(reminder);
+    const newReminder = new Reminder(description, tag);
+
+    this._reminders.push(newReminder);
   }
+
   /**
    * Returns the reminder at specified index.
    * @throws ReminderError if specified index is not valid
    * @param index - The index of the reminder
    */
   public getReminder(index: number): Reminder {
-    throw new Error("Not yet implemented");
+    if (!this.isIndexValid(index)) {
+      throw new Error("ReminderError: Invalid index");
+    }
+
+    return this._reminders[index];
   }
 
   /**
@@ -78,7 +77,13 @@ export default class RemindersHandler {
    * @param tag - The keyword used to help categorize reminder
    */
   public modifyReminder(index: number, description: string): void {
-    throw new Error("Not yet implemented");
+    if (!this.isIndexValid(index)) {
+      return;
+    }
+
+    const reminder = this._reminders[index];
+
+    reminder.description = description;
   }
 
   /**
@@ -87,7 +92,13 @@ export default class RemindersHandler {
    * @param index - The index of the reminder
    */
   public toggleCompletion(index: number): void {
-    throw new Error("Not yet implemented");
+    if (!this.isIndexValid(index)) {
+      return;
+    }
+
+    const reminder = this._reminders[index];
+
+    reminder.toggleCompletion();
   }
 
   /**
@@ -98,14 +109,15 @@ export default class RemindersHandler {
    * @param keyword - Text to search for in description and tag
    */
   public search(keyword: string): Reminder[] {
-    const tagMatches = this._reminders.filter((reminder) => reminder.tag === keyword);
-    if (tagMatches.length > 0) {
-      return tagMatches;
+    const keywordLower = keyword.toLowerCase();
+
+    let results = this.searchTags(keywordLower);
+
+    if (results.length === 0) {
+      results = this.searchDescriptions(keywordLower);
     }
-    const descriptionMatches = this._reminders.filter((reminder) =>
-      reminder.description.toLowerCase().includes(keyword.toLowerCase()),
-    );
-    return descriptionMatches;
+
+    return results;
   }
 
   /**
@@ -113,15 +125,6 @@ export default class RemindersHandler {
    */
   public groupByTag(): RemindersGroupingByTag {
     const groupings: RemindersGroupingByTag = {};
-    for (const reminder of this._reminders) {
-      const tag = reminder.tag;
-
-      if (!groupings[tag]) {
-        groupings[tag] = [];
-      } else {
-        groupings[tag].push(reminder);
-      }
-    }
 
     /* Pseudocode:
         You must group the reminders by tags. 
@@ -139,6 +142,16 @@ export default class RemindersHandler {
 
         */
 
+    for (const reminder of this._reminders) {
+      const tag = reminder.tag.toLowerCase();
+
+      if (!groupings[tag]) {
+        groupings[tag] = [];
+      }
+
+      groupings[tag].push(reminder);
+    }
+
     return groupings;
   }
 
@@ -147,9 +160,7 @@ export default class RemindersHandler {
    * @param keyword - Text to search for in description and tag
    */
   private searchTags(keyword: string): Reminder[] {
-    if (keyword === this._tag) {
-      throw new Error("Not yet implemented");
-    }
+    return this._reminders.filter((reminder) => reminder.tag.toLowerCase() === keyword);
   }
 
   /**
@@ -157,6 +168,6 @@ export default class RemindersHandler {
    * @param keyword - Text to search for in description and tag
    */
   private searchDescriptions(keyword: string): Reminder[] {
-    throw new Error("Not yet implemented");
+    return this._reminders.filter((reminder) => reminder.description.toLowerCase().includes(keyword));
   }
 }

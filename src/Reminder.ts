@@ -3,14 +3,13 @@
  * @description Represents a reminder for a given task
  */
 export default class Reminder {
-  private _description: string;
-  private _tag: string;
-  private _isCompleted: boolean;
   /*
-  Minimum Number of Properties you will need:
-  _description: string
-  _tag: string
-  _isCompleted: boolean (default value should be false)
+    Minimum Number of Properties you will need:
+    
+    _description: string
+    _tag: string
+    _isCompleted: boolean (default value should be false)
+
     */
 
   /**
@@ -18,7 +17,11 @@ export default class Reminder {
    * @param description - The full description of reminder
    * @param tag - The keyword used to help categorize reminder
    */
-  constructor(description: string, tag: string, isCompleted: boolean) {
+  private _description: string;
+  private _tag: string;
+  private _isCompleted: boolean;
+
+  constructor(description: string, tag: string) {
     this._description = description;
     this._tag = tag;
     this._isCompleted = false;
@@ -52,7 +55,6 @@ export default class Reminder {
    */
   public set tag(tag: string) {
     this._tag = tag;
-    throw new Error("Not yet implemented");
   }
 
   /**
@@ -66,7 +68,6 @@ export default class Reminder {
    * Toggles reminder completion status true ⬅ ➡ false.
    */
   public toggleCompletion(): void {
-    this._isCompleted = this.isCompleted;
-    throw new Error("Not yet implemented");
+    this._isCompleted = !this._isCompleted;
   }
 }
